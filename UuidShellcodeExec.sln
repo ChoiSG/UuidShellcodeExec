@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USEConsole", "USEConsole\US
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USELibrary", "USELibrary\USELibrary.csproj", "{A4CDC564-23A1-4491-9A80-DF4EAD3D5C47}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B7E5A2E7-4D01-41C5-BE1E-6AF0E1206A76}"
+	ProjectSection(SolutionItems) = preProject
+		shellcodeToUUID.py = shellcodeToUUID.py
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
