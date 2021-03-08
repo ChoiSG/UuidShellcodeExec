@@ -1,3 +1,5 @@
+import uuid 
+
 def convertToUUID(shellcode):
 	# If shellcode is not in multiples of 16, then add some nullbytes at the end
 	if len(shellcode) % 16 != 0:
